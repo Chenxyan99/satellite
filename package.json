@@ -10,6 +10,7 @@
   "dependencies": {
     "cesium": "1.93",
     "core-js": "^3.6.5",
+    "element-ui": "^2.15.6",
     "sass-loader": "^7.0.3",
     "vue": "^2.6.11"
   },

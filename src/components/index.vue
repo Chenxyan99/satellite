@@ -8,6 +8,7 @@ export default {
   name: "Map",
   data() {
     return {
+      positions: [],
     };
   },
   methods: {
@@ -59,6 +60,36 @@ export default {
 
       //开启地面深度检测，这样地下的就看不到了
       viewer.scene.globe.depthTestAgainstTerrain = true;
+    },
+    fileRead() {
+      const Cesium = this.cesium;
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "../static/CircularSat_LLA_Position.txt", true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          var fileContent = xhr.responseText;
+          var reader = new FileReader();
+          reader.readAsText(new Blob([fileContent]));
+
+          reader.onload = function (e) {
+            var fileContent = e.target.result;
+            var lines = fileContent.split("\n");
+            for (var i = 4; i < lines.length; i++) {
+              var line = lines[i];
+              var numbers = line.match(/-?\d+\.\d+/g);
+              if (numbers !== null) {
+                // console.log(lon + " " + lat + " " + alt);
+                var lat = parseFloat(numbers[1]);
+                var lon = parseFloat(numbers[2]);
+                var alt = parseFloat(numbers[3]);
+                positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, alt));
+              }
+            }
+          };
+        }
+      };
+
+      xhr.send();
     },
   },
   mounted() {
