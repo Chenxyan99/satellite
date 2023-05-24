@@ -1,17 +1,24 @@
 <template>
   <div class="box">
     <div id="cesiumContainer"></div>
+    <div style="width: 100%; height: 100%;">
+      <showLayers :satellite_entities="satellite_entities"></showLayers>
+    </div>
   </div>
 </template>
 <script lang="ts">
+import showLayers from "./showLayers.vue";
 import { drawSatellite } from "../utils/satellite.js";
 
 export default {
   name: "Map",
+  components: {
+    showLayers,
+  },
   data() {
     return {
       positions: [],
-      satelliteEntity: [],
+      satellite_entities: [],
       viewer: null,
     };
   },
@@ -92,7 +99,8 @@ export default {
           };
           // 卫星绘制
           setTimeout(function () {
-            drawSatellite(that.cesium,that.viewer,that.positions);
+            var satelliteEntity = drawSatellite(that.cesium, that.viewer, that.positions);
+            that.satellite_entities.push(satelliteEntity);
           }, 1000);
         })
         .catch((err) => {
@@ -119,6 +127,7 @@ body,
   padding: 0;
   overflow: hidden;
 }
+
 .box {
   height: 100%;
 }

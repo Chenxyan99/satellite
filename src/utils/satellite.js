@@ -48,5 +48,5 @@ export function drawSatellite(Cesium, viewer, positions) {
 
   // 将卫星实体添加到Cesium的Viewer中显示
   viewer.entities.add(satelliteEntity);
-  return;
+  return satelliteEntity;
 }
