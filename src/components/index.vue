@@ -12,7 +12,7 @@ export default {
     return {
       positions: [],
       satelliteEntity: [],
-      v: null,
+      viewer: null,
     };
   },
   methods: {
@@ -64,11 +64,10 @@ export default {
 
       //开启地面深度检测，这样地下的就看不到了
       viewer.scene.globe.depthTestAgainstTerrain = true;
-      this.v = viewer;
+      this.viewer = viewer;
     },
     fileRead() {
       var that = this;
-      const Cesium = this.cesium;
       this.$axios
         .get("/CircularSat_LLA_Position.txt")
         .then((result) => {
@@ -93,7 +92,7 @@ export default {
           };
           // 卫星绘制
           setTimeout(function () {
-            drawSatellite(Cesium, that.v, that.positions);
+            drawSatellite(that.cesium,that.viewer,that.positions);
           }, 1000);
         })
         .catch((err) => {
