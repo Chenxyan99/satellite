@@ -3,7 +3,8 @@
     <div id="cesiumContainer"></div>
   </div>
 </template>
-<script lang="ts">
+<script >
+import drawSatellite from './utils/index.js'
 export default {
   name: "Map",
   data() {
@@ -89,7 +90,8 @@ export default {
             }
           };
           // 卫星绘制
-          setTimeout(function () {
+          setTimeout( ()=> {
+            drawSatellite()
             this.drawSatellite();
           }, 1000);
         })
