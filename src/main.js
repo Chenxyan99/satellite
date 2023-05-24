@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
 import ElementUI from "element-ui";
+import axios from "axios";
 
 Vue.config.productionTip = false;
 Vue.use(ElementUI, { size: "mini" });
@@ -12,6 +13,7 @@ cesium.Ion.defaultAccessToken =
 
 Vue.prototype.cesium = cesium;
 Vue.prototype.widgets = widgets;
+Vue.prototype.$axios = axios;
 
 new Vue({
   render: (h) => h(App),

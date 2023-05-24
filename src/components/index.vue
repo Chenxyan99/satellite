@@ -9,6 +9,8 @@ export default {
   data() {
     return {
       positions: [],
+      satelliteEntity: [],
+      v: null,
     };
   },
   methods: {
@@ -60,43 +62,102 @@ export default {
 
       //开启地面深度检测，这样地下的就看不到了
       viewer.scene.globe.depthTestAgainstTerrain = true;
+      this.v = viewer;
     },
     fileRead() {
-      const Cesium = this.cesium;
-      var xhr = new XMLHttpRequest();
-      xhr.open("GET", "../static/CircularSat_LLA_Position.txt", true);
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          var fileContent = xhr.responseText;
+      var that = this;
+      this.$axios
+        .get("/CircularSat_LLA_Position.txt")
+        .then((result) => {
           var reader = new FileReader();
-          reader.readAsText(new Blob([fileContent]));
-
+          reader.readAsText(new Blob([result.data]));
           reader.onload = function (e) {
-            var fileContent = e.target.result;
-            var lines = fileContent.split("\n");
-            for (var i = 4; i < lines.length; i++) {
-              var line = lines[i];
-              var numbers = line.match(/-?\d+\.\d+/g);
-              if (numbers !== null) {
-                // console.log(lon + " " + lat + " " + alt);
-                var lat = parseFloat(numbers[1]);
-                var lon = parseFloat(numbers[2]);
-                var alt = parseFloat(numbers[3]);
-                positions.push(Cesium.Cartesian3.fromDegrees(lon, lat, alt));
+            if (e.target) {
+              var fileContent = e.target.result;
+              fileContent = String(fileContent);
+              var lines = fileContent.split("\n");
+              for (var i = 4; i < lines.length; i++) {
+                var line = lines[i];
+                var numbers = line.match(/-?\d+\.\d+/g);
+                if (numbers !== null) {
+                  var lat = parseFloat(numbers[1]);
+                  var lon = parseFloat(numbers[2]);
+                  var alt = parseFloat(numbers[3]);
+                  that.positions.push({ lon: lon, lat: lat, alt: alt });
+                }
               }
             }
           };
-        }
-      };
+          setTimeout(function () {
+            console.log(this.positions.length);
+          }, 1000);
+          // 卫星绘制
+          this.drawSatellite();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    drawSatellite() {
+      const Cesium = this.cesium;
+      var positionProperty = new Cesium.SampledPositionProperty();
 
-      xhr.send();
+      var TimeInterval = 60;
+
+      for (var i = 0; i < this.positions.length; i++) {
+        var time = Cesium.JulianDate.addSeconds(
+          this.v.clock.currentTime,
+          i * TimeInterval,
+          new Cesium.JulianDate()
+        );
+        var position = this.positions[i];
+        positionProperty.addSample(time, position);
+      }
+
+      var satelliteEntity = new Cesium.Entity({
+        availability: new Cesium.TimeIntervalCollection([
+          new Cesium.TimeInterval({
+            start: this.v.clock.currentTime,
+            stop: Cesium.JulianDate.addSeconds(
+              this.v.clock.currentTime,
+              60 * 60 * 24,
+              new Cesium.JulianDate()
+            ),
+          }),
+        ]),
+        position: positionProperty,
+        orientation: new Cesium.VelocityOrientationProperty(positionProperty),
+        // 卫星模型
+        model: {
+          uri: "./wx3.glb",
+          scale: 300,
+        },
+        path: {
+          resolution: 1,
+          material: Cesium.Color.WHITE,
+          width: 0.5,
+        },
+      });
+
+      // 插值器
+      satelliteEntity.position.setInterpolationOptions({
+        interpolationDegree: 5,
+        interpolationAlgorithm: Cesium.LagrangePolynomialApproximation,
+      });
+
+      // 将卫星实体添加到Cesium的Viewer中显示
+      this.v.entities.add(satelliteEntity);
     },
   },
   mounted() {
+    // 初始化
     this.init();
+    // txt测试数据读取
+    this.fileRead();
   },
 };
 </script>
+
 <style>
 html,
 body,
