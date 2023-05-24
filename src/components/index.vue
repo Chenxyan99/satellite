@@ -88,22 +88,20 @@ export default {
               }
             }
           };
-          setTimeout(function () {
-            console.log(this.positions.length);
-          }, 1000);
           // 卫星绘制
-          this.drawSatellite();
+          setTimeout(function () {
+            this.drawSatellite();
+          }, 1000);
         })
         .catch((err) => {
           console.log(err);
         });
     },
     drawSatellite() {
+      console.log(this.positions.length);
       const Cesium = this.cesium;
       var positionProperty = new Cesium.SampledPositionProperty();
-
       var TimeInterval = 60;
-
       for (var i = 0; i < this.positions.length; i++) {
         var time = Cesium.JulianDate.addSeconds(
           this.v.clock.currentTime,
