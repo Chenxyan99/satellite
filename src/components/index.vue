@@ -3,8 +3,7 @@
     <div id="cesiumContainer"></div>
   </div>
 </template>
-<script >
-import drawSatellite from './utils/index.js'
+<script lang="ts">
 export default {
   name: "Map",
   data() {
@@ -90,8 +89,7 @@ export default {
             }
           };
           // 卫星绘制
-          setTimeout( ()=> {
-            drawSatellite()
+          setTimeout(function () {
             this.drawSatellite();
           }, 1000);
         })
@@ -110,7 +108,11 @@ export default {
           i * TimeInterval,
           new Cesium.JulianDate()
         );
-        var position = this.positions[i];
+        var position = Cesium.Cartesian3.fromDegrees(
+          this.positions[i].lon,
+          this.positions[i].lat,
+          this.positions[i].alt
+        );
         positionProperty.addSample(time, position);
       }
 
