@@ -5,11 +5,10 @@
                 显示/隐藏图层<i class="el-icon-arrow-down el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
-                <el-checkbox id="checkbox" v-model="checked1" label="卫星" @change="showSatellite(checked1)"></el-checkbox>
-                <el-checkbox id="checkbox" v-model="checked2" label="轨迹" @change="showOrbit(checked2)"></el-checkbox>
+                <el-checkbox id="checkbox" v-model="checked0" label="卫星" @change="showSatellite(checked0)"></el-checkbox>
+                <el-checkbox id="checkbox" v-model="checked1" label="轨迹" @change="showOrbit(checked1)"></el-checkbox>
             </el-dropdown-menu>
         </el-dropdown>
-
     </div>
 </template>
 
@@ -21,8 +20,8 @@ export default {
     },
     data() {
         return {
-            checked1: true,
-            checked2: true
+            checked0: true,
+            checked1: true
         }
     },
     methods: {

@@ -9,6 +9,7 @@
 <script lang="ts">
 import showLayers from "./showLayers.vue";
 import { drawSatellite } from "../utils/satellite.js";
+import { createSegments } from "../utils/segments.js";
 
 export default {
   name: "Map",
@@ -18,6 +19,7 @@ export default {
   data() {
     return {
       positions: [],
+      segments: [],
       satellite_entities: [],
       viewer: null,
     };
@@ -97,10 +99,22 @@ export default {
               }
             }
           };
-          // 卫星绘制
           setTimeout(function () {
+            // 卫星绘制
             var satelliteEntity = drawSatellite(that.cesium, that.viewer, that.positions);
             that.satellite_entities.push(satelliteEntity);
+            // 任务绘制（模拟数据）
+            var segment = new Array();
+            for (var i = 0; i <= that.positions.length; i++) {
+              segment.push(that.positions[i]);
+              if (i == 50 || i == 150 || i == 300) {
+                that.segments.push(segment);
+                var segment = new Array();
+                segment.push(that.positions[i]);
+                if (i == 300) break;
+              }
+            }
+            createSegments(that.cesium, that.viewer, that.segments);
           }, 1000);
         })
         .catch((err) => {
