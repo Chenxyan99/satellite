@@ -10,7 +10,7 @@ export function drawSatellite(Cesium, viewer, positions) {
     var position = Cesium.Cartesian3.fromDegrees(
       positions[i].lon,
       positions[i].lat,
-      positions[i].alt
+      positions[i].alt * 1000
     );
     positionProperty.addSample(time, position);
   }
@@ -37,6 +37,7 @@ export function drawSatellite(Cesium, viewer, positions) {
       resolution: 1,
       material: Cesium.Color.WHITE,
       width: 0.5,
+      show: false
     },
   });
 

@@ -2,7 +2,7 @@
   <div class="box">
     <div id="cesiumContainer"></div>
     <div style="width: 100%; height: 100%;">
-      <showLayers :satellite_entities="satellite_entities"></showLayers>
+      <showLayers :satellite_entities="satellite_entities" :segments_entities="segments_entities"></showLayers>
     </div>
   </div>
 </template>
@@ -21,6 +21,7 @@ export default {
       positions: [],
       segments: [],
       satellite_entities: [],
+      segments_entities: [],
       viewer: null,
     };
   },
@@ -114,7 +115,7 @@ export default {
                 if (i == 300) break;
               }
             }
-            createSegments(that.cesium, that.viewer, that.segments);
+            that.segments_entities.push(createSegments(that.cesium, that.viewer, that.segments));
           }, 1000);
         })
         .catch((err) => {
