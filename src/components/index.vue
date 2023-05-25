@@ -110,6 +110,7 @@ export default {
               segment.push(that.positions[i]);
               if (i == 50 || i == 150 || i == 300) {
                 that.segments.push(segment);
+                segment = [];
                 segment.push(that.positions[i]);
                 if (i == 300) break;
               }
